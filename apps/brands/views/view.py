@@ -1,7 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
 from apps.brands.models import Brand
 from apps.brands.serializers.serializers import BrandSerializer
 
@@ -42,3 +41,14 @@ def brand_detail(request, pk):
     elif request.method == 'DELETE':
         brand.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def brand_by_slug(request, slug):
+    try:
+        brand = Brand.objects.get(slug=slug)
+    except Brand.DoesNotExist:
+        return Response({'error': 'Brand not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = BrandSerializer(brand)
+    return Response(serializer.data)

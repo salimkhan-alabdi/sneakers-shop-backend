@@ -23,6 +23,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     sizes = SizeSerializer(many=True, read_only=True)
     gender_display = serializers.CharField(source='get_gender_display', read_only=True)
+    is_favorite = serializers.SerializerMethodField()  # ✅ YANGI
 
     class Meta:
         model = Product
@@ -30,8 +31,17 @@ class ProductListSerializer(serializers.ModelSerializer):
             'id', 'name', 'slug', 'category', 'brand', 'price',
             'gender', 'gender_display', 'color_hex', 'material',
             'is_popular', 'is_new', 'rating', 'images', 'sizes',
+            'is_favorite',  # ✅ YANGI
             'created_at', 'updated_at'
         ]
+
+    def get_is_favorite(self, obj):
+        """User bu mahsulotni sevimlilariga qo'shganmi?"""
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            from apps.favorites.models import Favorite
+            return Favorite.objects.filter(user=request.user, product=obj).exists()
+        return False
 
 
 class ProductCreateUpdateSerializer(serializers.ModelSerializer):
