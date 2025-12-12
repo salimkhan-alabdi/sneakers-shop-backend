@@ -5,11 +5,11 @@ from apps.products.serializers.serializers import ProductListSerializer, SizeSer
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductListSerializer(read_only=True)
-    size = SizeSerializer(read_only=True)
+    size = SizeSerializer(read_only=True, allow_null=True)
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     product_id = serializers.IntegerField(write_only=True)
-    size_id = serializers.IntegerField(write_only=True)
+    size_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
 
     class Meta:
         model = CartItem
@@ -30,5 +30,5 @@ class CartSerializer(serializers.ModelSerializer):
 
 class AddToCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField(required=True)
-    size_id = serializers.IntegerField(required=True)
+    size_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(required=True, min_value=1)

@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
@@ -12,12 +11,16 @@ def product_list(request):
     if request.method == 'GET':
         products = Product.objects.select_related('category', 'brand').prefetch_related('images', 'sizes').all()
 
+        # QIDIRUV
         search = request.GET.get('search')
         if search:
             products = products.filter(name__icontains=search)
 
+        # FILTERLAR
         gender = request.GET.get('gender')
         brand = request.GET.get('brand')
+        brand_slug = request.GET.get('brand__slug')
+        category_slug = request.GET.get('category__slug')
         color = request.GET.get('color')
         size = request.GET.get('size')
         material = request.GET.get('material')
@@ -28,6 +31,10 @@ def product_list(request):
             products = products.filter(gender=gender)
         if brand:
             products = products.filter(brand_id=brand)
+        if brand_slug:
+            products = products.filter(brand__slug=brand_slug)
+        if category_slug:
+            products = products.filter(category__slug=category_slug)
         if color:
             products = products.filter(color_hex__iexact=color)
         if size:

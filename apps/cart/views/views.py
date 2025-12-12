@@ -29,41 +29,53 @@ def add_to_cart(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     product_id = serializer.validated_data['product_id']
-    size_id = serializer.validated_data['size_id']
+    size_id = serializer.validated_data.get('size_id')
     quantity = serializer.validated_data['quantity']
 
     try:
         product = Product.objects.get(id=product_id)
-        size = Size.objects.get(id=size_id, product=product)
     except Product.DoesNotExist:
         return Response({'error': 'Mahsulot topilmadi'}, status=status.HTTP_404_NOT_FOUND)
-    except Size.DoesNotExist:
-        return Response({'error': 'O\'lcham topilmadi'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Stock tekshirish
-    if size.stock < quantity:
-        return Response({
-            'error': f'Omborda yetarli mahsulot yo\'q. Mavjud: {size.stock}'
-        }, status=status.HTTP_400_BAD_REQUEST)
+    # Size ixtiyoriy
+    size = None
+    if size_id:
+        try:
+            size = Size.objects.get(id=size_id, product=product)
+        except Size.DoesNotExist:
+            return Response({'error': 'O\'lcham topilmadi'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Savatcha olish yoki yaratish
+        if size.stock < quantity:
+            return Response({
+                'error': f'Omborda yetarli mahsulot yo\'q. Mavjud: {size.stock}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
     cart, created = Cart.objects.get_or_create(user=request.user)
 
-    # Mahsulot allaqachon savatchada bor yoki yo'qligini tekshirish
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product,
-        size=size,
-        defaults={'quantity': quantity}
-    )
+    if size:
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            size=size,
+            defaults={'quantity': quantity}
+        )
+    else:
+
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            size__isnull=True,
+            defaults={'quantity': quantity}
+        )
 
     if not created:
-        # Agar allaqachon bor bo'lsa, miqdorni qo'shish
         new_quantity = cart_item.quantity + quantity
-        if size.stock < new_quantity:
+
+        if size and size.stock < new_quantity:
             return Response({
                 'error': f'Omborda yetarli mahsulot yo\'q. Mavjud: {size.stock}, Savatchada: {cart_item.quantity}'
             }, status=status.HTTP_400_BAD_REQUEST)
+
         cart_item.quantity = new_quantity
         cart_item.save()
 
@@ -95,8 +107,7 @@ def update_cart_item(request, item_id):
     except ValueError:
         return Response({'error': 'Noto\'g\'ri miqdor'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Stock tekshirish
-    if cart_item.size.stock < quantity:
+    if cart_item.size and cart_item.size.stock < quantity:
         return Response({
             'error': f'Omborda yetarli mahsulot yo\'q. Mavjud: {cart_item.size.stock}'
         }, status=status.HTTP_400_BAD_REQUEST)
