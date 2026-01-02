@@ -170,8 +170,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # ===== S3 / MEDIA =====
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f"https://{os.environ.get('AWS_STORAGE_BUCKET_NAME')}.s3.eu-central-003.backblazeb2.com/"
-
+MEDIA_URL = "https://s3.eu-central-003.backblazeb2.com/sneakers-shop/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -256,11 +255,15 @@ CSRF_TRUSTED_ORIGINS = [
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+
+AWS_STORAGE_BUCKET_NAME = "sneakers-shop"
 
 AWS_S3_ENDPOINT_URL = "https://s3.eu-central-003.backblazeb2.com"
 AWS_S3_REGION_NAME = "eu-central-003"
+
+AWS_S3_ADDRESSING_STYLE = "path" 
 AWS_S3_SIGNATURE_VERSION = "s3v4"
+
 
 AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = None
