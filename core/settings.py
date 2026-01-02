@@ -35,9 +35,11 @@ ALLOWED_HOSTS = [
 ]
 
 # Application definition
+INSTALLED_APPS += ['storages']
 
 INSTALLED_APPS = [
     'corsheaders',
+    'storages',  # ✅ ДОБАВИЛИ
 
     'modeltranslation',
     'django.contrib.admin',
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
     'apps.favorites',
     'apps.orders',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -164,12 +167,13 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# ===== S3 / MEDIA =====
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = f"https://{os.environ.get('AWS_STORAGE_BUCKET_NAME')}.s3.us-west-004.backblazeb2.com/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -251,3 +255,14 @@ CSRF_TRUSTED_ORIGINS = [
     "https://sneakers-shop-frontend.vercel.app",
     "https://*.vercel.app",
 ]
+
+AWS_ACCESS_KEY_ID = os.environ.get("003469054a2c1050000000001")
+AWS_SECRET_ACCESS_KEY = os.environ.get("K0033NTwPtOeVDQ8PCiFjSkJieUbvss")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("sneakers-shop")
+
+AWS_S3_ENDPOINT_URL = "https://s3.eu-central-003.backblazeb2.com"
+AWS_S3_REGION_NAME = "eu-central-003"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = None

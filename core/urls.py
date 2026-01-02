@@ -26,7 +26,6 @@ urlpatterns = [
     path('api/v1/', include('apps.urls.v1')),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 schema_view = SpectacularSwaggerView.as_view(url_name='schema')
