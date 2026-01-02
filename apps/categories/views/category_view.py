@@ -9,7 +9,12 @@ from apps.categories.serializers.serializers import CategorySerializer
 def category_list(request):
     if request.method == 'GET':
         categories = Category.objects.all()
-        serializer = CategorySerializer(categories, many=True)
+        serializer = CategorySerializer(
+        categories,
+        many=True,
+        context={"request": request}
+)
+
         return Response(serializer.data)
 
     elif request.method == 'POST':
