@@ -30,11 +30,15 @@ SECRET_KEY = config.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = config.ALLOWED_HOSTS
+ALLOWED_HOSTS = [
+    ".onrender.com",
+]
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
+
     'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,7 +50,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
-    'corsheaders',
     'drf_spectacular',
 
     'apps.products',
@@ -63,8 +66,10 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
+
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -230,3 +235,16 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
 }
+
+# CORS_ALLOWED_ORIGINS = [
+#     "https://sneakers-shop-frontend.vercel.app",
+# ] 
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://sneakers-shop-backend-to48.onrender.com",
+    "https://sneakers-shop-frontend.vercel.app",
+    "https://*.vercel.app",
+]
