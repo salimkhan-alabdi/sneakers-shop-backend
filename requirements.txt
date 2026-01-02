@@ -26,3 +26,4 @@ django-debug-toolbar==4.3.0
 gunicorn==21.2.0
 whitenoise
 dj-database-url
+django-storages[boto3]==1.14.4
