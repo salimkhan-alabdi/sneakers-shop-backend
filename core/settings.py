@@ -35,7 +35,6 @@ ALLOWED_HOSTS = [
 ]
 
 # Application definition
-
 INSTALLED_APPS = [
     'corsheaders',
     'storages',  # ✅ ДОБАВИЛИ
@@ -171,7 +170,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # ===== S3 / MEDIA =====
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f"https://{os.environ.get('AWS_STORAGE_BUCKET_NAME')}.s3.us-west-004.backblazeb2.com/"
+MEDIA_URL = f"https://{os.environ.get('AWS_STORAGE_BUCKET_NAME')}.s3.eu-central-003.backblazeb2.com/"
 
 
 # Default primary key field type
@@ -255,9 +254,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
 ]
 
-AWS_ACCESS_KEY_ID = os.environ.get("003469054a2c1050000000001")
-AWS_SECRET_ACCESS_KEY = os.environ.get("K0033NTwPtOeVDQ8PCiFjSkJieUbvss")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("sneakers-shop")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 AWS_S3_ENDPOINT_URL = "https://s3.eu-central-003.backblazeb2.com"
 AWS_S3_REGION_NAME = "eu-central-003"
