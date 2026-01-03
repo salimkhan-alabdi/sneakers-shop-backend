@@ -1,3 +1,7 @@
+from rest_framework import serializers
+
+from apps.products.models import Product, ProductImage
+
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
