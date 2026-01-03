@@ -10,7 +10,6 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_image(self, obj):
-        request = self.context.get("request")
-        if obj.image:
-            return request.build_absolute_uri(obj.image.url)
+        if obj.image_url:
+            return obj.image_url
         return None

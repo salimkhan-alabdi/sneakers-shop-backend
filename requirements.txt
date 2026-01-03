@@ -22,7 +22,7 @@ djangorestframework>=3.14,<3.16
 djangorestframework-simplejwt==5.5.1
 drf-spectacular==0.28.0
 drf-yasg
-django-modeltranslation==0.19.17
+django-modeltranslation==0.18.11
 
 
 # Auth / JWT
