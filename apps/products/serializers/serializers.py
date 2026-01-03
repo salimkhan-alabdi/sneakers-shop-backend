@@ -51,6 +51,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "slug",
+            "brand",
             "price",
             "gender",
             "color_hex",
