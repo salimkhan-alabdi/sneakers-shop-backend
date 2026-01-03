@@ -1,9 +1,34 @@
-from decimal import Decimal
 from rest_framework import serializers
 
 from apps.products.models import Product, ProductImage, Size
-from apps.categories.models import Category
 from apps.brands.models import Brand
+from apps.categories.models import Category
+
+
+# --------------------
+# BRAND
+# --------------------
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = [
+            "id",
+            "name",
+            "slug",
+        ]
+
+
+# --------------------
+# CATEGORY
+# --------------------
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+            "slug",
+        ]
 
 
 # --------------------
@@ -22,7 +47,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
         ]
 
     def get_image(self, obj):
-        return obj.image_url or None
+        return obj.image_url
 
 
 # --------------------
@@ -42,6 +67,8 @@ class SizeSerializer(serializers.ModelSerializer):
 # PRODUCT LIST
 # --------------------
 class ProductListSerializer(serializers.ModelSerializer):
+    brand = BrandSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
     sizes = SizeSerializer(many=True, read_only=True)
 
@@ -52,6 +79,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "brand",
+            "category",
             "price",
             "gender",
             "color_hex",
