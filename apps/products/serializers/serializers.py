@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.products.models import Product, ProductImage
 
+
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
@@ -18,6 +19,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
         if obj.image_url:
             return obj.image_url
         return None
+
 
 class ProductListSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
@@ -38,4 +40,19 @@ class ProductListSerializer(serializers.ModelSerializer):
             "images",
             "created_at",
             "updated_at",
+        ]
+
+
+class ProductCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "price",
+            "gender",
+            "color_hex",
+            "material",
+            "is_popular",
+            "is_new",
+            "rating",
         ]
