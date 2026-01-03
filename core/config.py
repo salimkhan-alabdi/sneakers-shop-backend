@@ -31,11 +31,11 @@ MEDIA_ROOT = env('MEDIA_ROOT', default='/vol/web/media')
 STATIC_ROOT = env('STATIC_ROOT', default='/vol/web/static')
 
 # DATABASE SETTINGS
-DB_NAME = env('DB_NAME')
-DB_USER = env('DB_USER')
-DB_PASS = env('DB_PASS')
-DB_HOST = env('DB_HOST')
-DB_PORT = env('DB_PORT')
+# DB_NAME = env('DB_NAME')
+# DB_USER = env('DB_USER')
+# DB_PASS = env('DB_PASS')
+# DB_HOST = env('DB_HOST')
+# DB_PORT = env('DB_PORT')
 
 # telegram bot
 TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN', default='7701058454:AAGvUTJ_WlkyAxVlrncYU1GZZ6jUZ8Cjebo')

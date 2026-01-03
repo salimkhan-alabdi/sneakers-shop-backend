@@ -6,7 +6,16 @@ from django.utils.text import slugify
 class Category(models.Model):
     name = models.CharField(_("Kategoriya nomi"), max_length=255)
     slug = models.SlugField(_("Slug"), unique=True, blank=True)
-    image = models.ImageField(_("Rasm"), upload_to='categories/')
+
+    image_url = models.URLField(_("Rasm URL"), blank=True, null=True)
+    image_path = models.CharField(
+        _("ImageKit path"),
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="products/42/uuid.jpg"
+    )
+
     created_at = models.DateTimeField(_("Yaratilgan sana"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Yangilangan sana"), auto_now=True)
 

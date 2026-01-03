@@ -1,9 +1,10 @@
 from django.urls import path
-from apps.shared.views import set_language, get_language
+from .views import ImageKitAuthView, set_language, get_language
 
 app_name = "shared"
 
 urlpatterns = [
-    path('language/set/', set_language, name='set-language'),
-    path('language/get/', get_language, name='get-language'),
+    path("imagekit/auth/", ImageKitAuthView.as_view()),
+    path("language/set/", set_language),
+    path("language/get/", get_language),
 ]

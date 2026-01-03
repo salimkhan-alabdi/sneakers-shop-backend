@@ -1,80 +1,158 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from apps.brands.serializers.serializers import BrandSerializer
 from apps.categories.serializers.serializers import CategorySerializer
-from apps.products.models import ProductImage, Size, Product
+from apps.products.models import Product, ProductImage, Size
 
 
+# --------------------
+# PRODUCT IMAGE
+# --------------------
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ['id', 'image', 'is_main', 'created_at']
+        fields = [
+            "id",
+            "image_url",
+            "image_path",
+            "is_main",
+            "created_at",
+        ]
 
 
+# --------------------
+# SIZE
+# --------------------
 class SizeSerializer(serializers.ModelSerializer):
+    stock = serializers.IntegerField(min_value=0)
+
     class Meta:
         model = Size
-        fields = ['id', 'size', 'stock']
+        fields = [
+            "id",
+            "size",
+            "stock",
+        ]
 
 
+# --------------------
+# PRODUCT LIST
+# --------------------
 class ProductListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     brand = BrandSerializer(read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
     sizes = SizeSerializer(many=True, read_only=True)
-    gender_display = serializers.CharField(source='get_gender_display', read_only=True)
-    is_favorite = serializers.SerializerMethodField()  # ✅ YANGI
+
+    gender_display = serializers.CharField(
+        source="get_gender_display",
+        read_only=True,
+    )
+
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'slug', 'category', 'brand', 'price',
-            'gender', 'gender_display', 'color_hex', 'material',
-            'is_popular', 'is_new', 'rating', 'images', 'sizes',
-            'is_favorite',  # ✅ YANGI
-            'created_at', 'updated_at'
+            "id",
+            "name",
+            "slug",
+            "category",
+            "brand",
+            "price",
+            "gender",
+            "gender_display",
+            "color_hex",
+            "material",
+            "is_popular",
+            "is_new",
+            "rating",
+            "images",
+            "sizes",
+            "is_favorite",
+            "created_at",
+            "updated_at",
         ]
 
     def get_is_favorite(self, obj):
-        """User bu mahsulotni sevimlilariga qo'shganmi?"""
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request and request.user.is_authenticated:
             from apps.favorites.models import Favorite
-            return Favorite.objects.filter(user=request.user, product=obj).exists()
+            return Favorite.objects.filter(
+                user=request.user,
+                product=obj,
+            ).exists()
         return False
 
 
+# --------------------
+# PRODUCT CREATE / UPDATE
+# --------------------
 class ProductCreateUpdateSerializer(serializers.ModelSerializer):
+    price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        min_value=Decimal("0"),
+    )
+
+    rating = serializers.FloatField(min_value=0, required=False)
+
     sizes = SizeSerializer(many=True, required=False)
 
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'slug', 'category', 'brand', 'price',
-            'gender', 'color_hex', 'material', 'is_popular', 'is_new',
-            'rating', 'sizes', 'created_at', 'updated_at'
+            "id",
+            "name",
+            "slug",
+            "category",
+            "brand",
+            "price",
+            "gender",
+            "color_hex",
+            "material",
+            "is_popular",
+            "is_new",
+            "rating",
+            "sizes",
+            "created_at",
+            "updated_at",
         ]
-        read_only_fields = ['slug', 'created_at', 'updated_at']
+        read_only_fields = [
+            "slug",
+            "created_at",
+            "updated_at",
+        ]
 
     def create(self, validated_data):
-        sizes_data = validated_data.pop('sizes', [])
+        sizes_data = validated_data.pop("sizes", [])
+
         product = Product.objects.create(**validated_data)
 
         for size_data in sizes_data:
-            Size.objects.create(product=product, **size_data)
+            Size.objects.create(
+                product=product,
+                **size_data,
+            )
 
         return product
 
     def update(self, instance, validated_data):
-        sizes_data = validated_data.pop('sizes', None)
+        sizes_data = validated_data.pop("sizes", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
         instance.save()
 
         if sizes_data is not None:
             instance.sizes.all().delete()
             for size_data in sizes_data:
-                Size.objects.create(product=instance, **size_data)
+                Size.objects.create(
+                    product=instance,
+                    **size_data,
+                )
 
         return instance
