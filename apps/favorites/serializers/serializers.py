@@ -5,26 +5,29 @@ from apps.shared.utils import get_imagekit
 
 class FavoriteProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    title = serializers.CharField(source='title', default='') 
+    name = serializers.CharField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     image = serializers.SerializerMethodField()
 
 def get_image(self, obj):
-    img_obj = obj.images.filter(is_main=True).first() or obj.images.first()
-    if not img_obj:
-        return None
+        # Ищем фото: сначала главное, если нет — любое
+        img_obj = obj.images.filter(is_main=True).first() or obj.images.first()
+        if not img_obj:
+            return None
 
-    ik = get_imagekit()
-    if ik and img_obj.image_path:
-        try:
-            return ik.url({
-                "path": img_obj.image_path,
-                "transformation": [{"width": "300"}]
-            })
-        except:
-            pass 
-    
-    return img_obj.image_url or None
+        # Пробуем ImageKit
+        ik = get_imagekit()
+        if ik and hasattr(img_obj, 'image_path') and img_obj.image_path:
+            try:
+                return ik.url({
+                    "path": img_obj.image_path,
+                    "transformation": [{"width": "400", "crop": "at_max"}]
+                })
+            except Exception:
+                pass 
+
+        # Если ImageKit не сработал или ключей нет, берем прямой URL
+        return getattr(img_obj, 'image_url', None)
 
 class FavoriteSerializer(serializers.ModelSerializer):
     product = FavoriteProductSerializer(read_only=True)
