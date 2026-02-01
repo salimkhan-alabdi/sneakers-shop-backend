@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.favorites.models import Favorite
 from apps.products.models import Product
-from ..utils import get_imagekit  # Импортируем твой утилит
+from apps.shared.utils import get_imagekit
 
 class FavoriteProductSerializer(serializers.Serializer):
     """Данные продукта внутри избранного с поддержкой ImageKit"""
