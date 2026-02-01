@@ -19,10 +19,15 @@ def superuser_required(view_func):
     return decorated_view
 
 
-
 def get_imagekit():
-    return ImageKit(
-        public_key=settings.IMAGEKIT_PUBLIC_KEY,
-        private_key=settings.IMAGEKIT_PRIVATE_KEY,
-        url_endpoint=settings.IMAGEKIT_URL_ENDPOINT,
-    )
+    if not settings.IMAGEKIT_PUBLIC_KEY or not settings.IMAGEKIT_URL_ENDPOINT:
+        return None
+    try:
+        return ImageKit(
+            public_key=settings.IMAGEKIT_PUBLIC_KEY,
+            private_key=settings.IMAGEKIT_PRIVATE_KEY,
+            url_endpoint=settings.IMAGEKIT_URL_ENDPOINT,
+        )
+    except Exception as e:
+        print(f"ImageKit Init Error: {e}")
+        return None

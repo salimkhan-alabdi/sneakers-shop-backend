@@ -22,32 +22,23 @@ class CartItemSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'subtotal', 'created_at', 'updated_at']
 
-    def get_product_image(self, obj):
-        """Получение оптимизированной ссылки через ImageKit"""
-        product = obj.product
-        # Ищем главное фото или любое доступное
-        img_obj = product.images.filter(is_main=True).first() or product.images.first()
-        
-        if not img_obj or not img_obj.image:
-            return None
+def get_image(self, obj):
+    img_obj = obj.images.filter(is_main=True).first() or obj.images.first()
+    if not img_obj:
+        return None
 
+    ik = get_imagekit()
+    if ik and img_obj.image_path:
         try:
-            ik = get_imagekit()
-            # Генерируем URL (например, квадрат 200x200 для превью в корзине)
             return ik.url({
-                "path": str(img_obj.image),
-                "transformation": [{
-                    "height": "200",
-                    "width": "200",
-                    "crop": "at_max"
-                }]
+                "path": img_obj.image_path,
+                "transformation": [{"width": "300"}]
             })
-        except Exception:
-            # Если ImageKit не настроен, возвращаем обычную ссылку
-            request = self.context.get('request')
-            if request and hasattr(img_obj.image, 'url'):
-                return request.build_absolute_uri(img_obj.image.url)
-            return img_obj.image.url if hasattr(img_obj.image, 'url') else None
+        except:
+            pass # Если не вышло, идем к запасному варианту ниже
+    
+    # Запасной вариант (Fallback)
+    return img_obj.image_url or None
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
