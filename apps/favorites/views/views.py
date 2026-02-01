@@ -9,22 +9,26 @@ from apps.favorites.serializers.serializers import FavoriteSerializer
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def favorite_list(request):
-    """
-    GET: Foydalanuvchi sevimlilar ro'yxatini olish
-    POST: Sevimlilar ro'yxatiga mahsulot qo'shish
-    """
     if request.method == 'GET':
-        favorites = Favorite.objects.filter(user=request.user).select_related('product')
-        serializer = FavoriteSerializer(favorites, many=True, context={'request': request})
-        return Response(serializer.data)
+        try:
+            favorites = Favorite.objects.filter(user=request.user).select_related('product')
+            serializer = FavoriteSerializer(favorites, many=True, context={'request': request})
+            return Response(serializer.data)
+        except Exception as e:
+            # Вместо падения сервера возвращаем описание ошибки (для отладки)
+            return Response({"error": "Serializer error", "details": str(e)}, status=500)
 
     elif request.method == 'POST':
+        # Передаем request в контекст, чтобы сериализатор знал, какой юзер создает запись
         serializer = FavoriteSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
+            # Проверяем на дубликаты перед сохранением
+            if Favorite.objects.filter(user=request.user, product=serializer.validated_data['product']).exists():
+                return Response({'error': 'Ushbu mahsulot allaqachon sevimlilarda'}, status=400)
+            
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

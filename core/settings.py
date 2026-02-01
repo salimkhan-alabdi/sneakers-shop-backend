@@ -30,7 +30,7 @@ SECRET_KEY = config.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS = [ 
     ".onrender.com",
     "127.0.0.1",
     "localhost",
@@ -39,7 +39,7 @@ ALLOWED_HOSTS = [
 # Application definition
 INSTALLED_APPS = [
     'corsheaders',
-    'storages',  # ✅ ДОБАВИЛИ
+    'storages', 
 
     'modeltranslation',
     'django.contrib.admin',
