@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.cart.models import Cart, CartItem
 from apps.products.serializers.serializers import ProductListSerializer, SizeSerializer
-from ..utils import get_imagekit  
+from apps.products.utils import get_imagekit
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductListSerializer(read_only=True)
