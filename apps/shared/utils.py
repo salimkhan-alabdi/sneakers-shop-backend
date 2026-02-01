@@ -19,15 +19,10 @@ def superuser_required(view_func):
     return decorated_view
 
 
+
 def get_imagekit():
-    if not all([settings.IMAGEKIT_PUBLIC_KEY, settings.IMAGEKIT_PRIVATE_KEY, settings.IMAGEKIT_URL_ENDPOINT]):
-        return None
-    
-    try:
-        return ImageKit(
-            public_key=settings.IMAGEKIT_PUBLIC_KEY,
-            private_key=settings.IMAGEKIT_PRIVATE_KEY,
-            url_endpoint=settings.IMAGEKIT_URL_ENDPOINT,
-        )
-    except Exception:
-        return None
+    return ImageKit(
+        public_key=settings.IMAGEKIT_PUBLIC_KEY,
+        private_key=settings.IMAGEKIT_PRIVATE_KEY,
+        url_endpoint=settings.IMAGEKIT_URL_ENDPOINT,
+    )

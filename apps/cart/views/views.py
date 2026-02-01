@@ -62,11 +62,11 @@ def add_to_cart(request):
     else:
 
         cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product,
-        size=None, 
-        defaults={'quantity': quantity}
-)
+            cart=cart,
+            product=product,
+            size__isnull=True,
+            defaults={'quantity': quantity}
+        )
 
     if not created:
         new_quantity = cart_item.quantity + quantity
