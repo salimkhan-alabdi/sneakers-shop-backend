@@ -31,7 +31,7 @@ SECRET_KEY = config.SECRET_KEY
 DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = [ 
-    ".onrender.com",
+    '.vercel.app',
     "127.0.0.1",
     "localhost",
 ]
@@ -255,7 +255,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://sneakers-shop-backend-to48.onrender.com",
     "https://sneakers-shop-frontend.vercel.app",
     "https://*.vercel.app",
 ]
